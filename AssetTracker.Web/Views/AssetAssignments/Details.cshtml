@@ -1,0 +1,20 @@
+﻿@model AssetTracker.Core.Models.AssetAssignment
+
+<h2>Assignment Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Asset</dt>
+    <dd class="col-sm-9">@Model.Asset?.Model (@Model.Asset?.SerialNumber)</dd>
+
+    <dt class="col-sm-3">Employee</dt>
+    <dd class="col-sm-9">@Model.Employee?.Name</dd>
+
+    <dt class="col-sm-3">Assigned</dt>
+    <dd class="col-sm-9">@Model.AssignedDate</dd>
+
+    <dt class="col-sm-3">Returned</dt>
+    <dd class="col-sm-9">@Model.ReturnedDate</dd>
+</dl>
+
+<a asp-action="Return" asp-route-id="@Model.AssetAssignmentId" class="btn btn-success">Return</a>
+<a asp-action="Index" class="btn btn-secondary">Back</a>

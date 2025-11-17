@@ -1,0 +1,17 @@
+﻿@model AssetTracker.Core.Models.AssetAssignment
+
+<h2>Return Asset</h2>
+
+<p><strong>Asset:</strong> @Model.Asset?.Model (@Model.Asset?.SerialNumber)</p>
+<p><strong>Employee:</strong> @Model.Employee?.Name</p>
+
+<form asp-action="Return">
+    <input type="hidden" asp-for="AssetAssignmentId" />
+
+    <div class="alert alert-warning">
+        Are you sure you want to return this asset?
+    </div>
+
+    <button type="submit" class="btn btn-success">Return</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

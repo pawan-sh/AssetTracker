@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<style>
+    /* Full reset for this page */
+    body, html {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden;
+    }
+
+    /* FULL SCREEN SECTION */
+    .hero-fullscreen {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        background: url('https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1400&q=80') no-repeat center center / cover;
+    }
+
+    /* DARK LAYER */
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 1;
+    }
+
+    /* CONTENT */
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 650px;
+        padding: 120px 70px;
+        color: white;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .logo {
+        width: 150px;
+        margin-bottom: 30px;
+    }
+
+    .eyebrow {
+        font-size: 18px;
+        opacity: 0.85;
+        margin-bottom: 10px;
+    }
+
+    .title {
+        font-size: 58px;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 15px;
+    }
+
+    .subtitle {
+        font-size: 20px;
+        opacity: 0.9;
+        margin-bottom: 30px;
+    }
+
+    .btn-custom {
+        padding: 14px 28px;
+        font-size: 18px;
+        border-radius: 8px;
+        margin-right: 12px;
+        min-width: 210px;
+    }
+
+</style>
+
+
+<!-- FULL SCREEN HERO -->
+<div class="hero-fullscreen">
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+
+        <img src="https://enkaytech.com/wp-content/uploads/2025/08/main-logo.svg"
+             class="logo" />
+
+        <div class="eyebrow">Asset Management Portal</div>
+
+        <div class="title">Admin Dashboard for IT Teams</div>
+
+        <div class="subtitle">
+            Track assets, monitor assignments, and manage employee devices — all in one secure place.
+        </div>
+
+        <a href="/Assets" class="btn btn-primary btn-custom">Manage Assets</a>
+        <a href="/Employees" class="btn btn-light btn-custom">View Employees</a>
+
+    </div>
+
+</div>

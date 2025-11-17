@@ -1,0 +1,17 @@
+﻿@model AssetTracker.Core.Models.AssetAssignment
+
+<h2>Assign Asset</h2>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label>Employee</label>
+        <select asp-for="EmployeeId" asp-items="ViewBag.EmployeeId" class="form-control"></select>
+    </div>
+
+    <div class="form-group mt-3">
+        <label>Asset</label>
+        <select asp-for="AssetId" asp-items="ViewBag.AssetId" class="form-control"></select>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Assign</button>
+</form>
