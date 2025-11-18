@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AssetTracker.Core.Models;
 using AssetTracker.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AssetTracker.Web.Controllers
 {
+    
     public class EmployeesController : Controller
     {
         private readonly AssetTrackerDbContext _context;

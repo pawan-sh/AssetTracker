@@ -1,14 +1,16 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AssetTracker.Core.Models;
+using AssetTracker.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using AssetTracker.Core.Models;
-using AssetTracker.Infrastructure.Data;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AssetTracker.Web.Controllers
 {
+    
     public class AssetAssignmentsController : Controller
     {
         private readonly AssetTrackerDbContext _context;

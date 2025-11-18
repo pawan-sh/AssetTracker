@@ -39,7 +39,6 @@
     </style>
 </head>
 
-
 <body>
 
     <!-- NAVIGATION -->
@@ -68,26 +67,23 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="AssetAssignments" asp-action="Index">Assignments</a>
                         </li>
+
                         @if (User.IsInRole("Admin") || User.IsInRole("Director"))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="AssetAssignments" asp-action="Index">Assignments</a>
                             </li>
                         }
-
-
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
 
-
     <!-- PAGE CONTENT -->
     <div class="content-area @(ViewData["NoPadding"])">
         @RenderBody()
     </div>
-
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
