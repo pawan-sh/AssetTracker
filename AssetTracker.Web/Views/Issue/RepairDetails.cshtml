@@ -1,0 +1,44 @@
+﻿@model AssetTracker.Core.Models.Issue
+
+<h2>Repair Details</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Technician</th>
+        <td>@Model.Repair?.TechnicianName</td>
+    </tr>
+
+    <tr>
+        <th>Phone</th>
+        <td>@Model.Repair?.TechnicianPhone</td>
+    </tr>
+
+    <tr>
+        <th>Cost</th>
+        <td>₹@Model.Repair?.RepairCost</td>
+    </tr>
+
+    <tr>
+        <th>Date</th>
+        <td>@Model.Repair?.RepairDate.ToString("dd/MM/yyyy")</td>
+    </tr>
+
+    <tr>
+        <th>Notes</th>
+        <td>@Model.Repair?.RepairNotes</td>
+    </tr>
+</table>
+
+@if (Model.Status == "InRepair")
+{
+    <a class="btn btn-success"
+       asp-controller="Issue"
+       asp-action="MarkCompleted"
+       asp-route-id="@Model.IssueId">
+        Mark as Completed
+    </a>
+}
+else if (Model.Status == "Completed")
+{
+    <span class="badge bg-success">Repair Completed</span>
+}

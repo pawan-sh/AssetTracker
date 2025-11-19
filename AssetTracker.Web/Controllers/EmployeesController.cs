@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace AssetTracker.Web.Controllers
 {
-    
+    [Authorize(Roles = "Admin,HR")]
     public class EmployeesController : Controller
     {
         private readonly AssetTrackerDbContext _context;

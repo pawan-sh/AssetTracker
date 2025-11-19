@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,7 +14,7 @@
     <link rel="stylesheet" href="~/css/site.css" />
 
     <style>
-        /* 🟦 Glass Navigation Bar */
+        /* Glass Navigation Bar */
         .glass-nav {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
@@ -27,12 +32,12 @@
                 color: #0a1a3d !important;
             }
 
-        /* 🟩 Page Content Wrapper */
+        /* Page Content Wrapper */
         .content-area {
             padding: 40px 60px;
         }
 
-        /* 🚀 Home page = no padding */
+        /* Home Page Fullscreen */
         .no-padding {
             padding: 0 !important;
         }
@@ -45,6 +50,7 @@
     <header>
         <nav class="navbar glass-nav navbar-expand-sm navbar-light">
             <div class="container-fluid">
+
                 <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
                     AssetTracker
                 </a>
@@ -55,27 +61,82 @@
 
                 <div class="collapse navbar-collapse" id="mainNav">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Assets" asp-action="Index">Assets</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Employees" asp-action="Index">Employees</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="AssetAssignments" asp-action="Index">Assignments</a>
-                        </li>
 
-                        @if (User.IsInRole("Admin") || User.IsInRole("Director"))
+                        @if (SignInManager.IsSignedIn(User))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="AssetAssignments" asp-action="Index">Assignments</a>
+                            <!-- Admin + Director -->
+                            @if (User.IsInRole("Admin") || User.IsInRole("Director"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Assets" asp-action="Index">Assets</a>
+                                </li>
+                            }
+
+                            <!-- Admin + HR -->
+                            @if (User.IsInRole("Admin") || User.IsInRole("HR"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Employees" asp-action="Index">Employees</a>
+                                </li>
+                            }
+
+                            <!-- Admin Only -->
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="AssetAssignments" asp-action="Index">Assignments</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Issue" asp-action="List">Issues</a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Employee") || User.IsInRole("HR"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Issue" asp-action="Create">Report Issue</a>
+                                </li>
+                            }
+
+                            @if (!User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Issue" asp-action="MyIssues">My Issues</a>
+                                </li>
+                            }
+                            
+
+
+
+                            <!-- Profile Dropdown -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle fw-bold" data-bs-toggle="dropdown">
+                                    @UserManager.GetUserName(User)
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">Profile</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li>
+                                        <form asp-controller="Account" asp-action="Logout" method="post">
+                                            <button class="dropdown-item text-danger">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
                             </li>
                         }
+                        else
+                        {
+                            <!-- Not logged in -->
+                            <li class="nav-item">
+                                <a class="btn btn-primary px-3" asp-controller="Account" asp-action="Login">Login</a>
+                            </li>
+                        }
+
                     </ul>
+
                 </div>
+
             </div>
         </nav>
     </header>
@@ -87,6 +148,7 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
     @RenderSection("Scripts", required: false)
 
 </body>

@@ -4,6 +4,7 @@ using AssetTracker.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetTracker.Infrastructure.Migrations
 {
     [DbContext(typeof(AssetTrackerDbContext))]
-    partial class AssetTrackerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251118152517_AddRepairTable")]
+    partial class AddRepairTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,42 +115,51 @@ namespace AssetTracker.Infrastructure.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("AssetTracker.Core.Models.Issue", b =>
+            modelBuilder.Entity("AssetTracker.Core.Models.Repair", b =>
                 {
-                    b.Property<int>("IssueId")
+                    b.Property<int>("RepairId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IssueId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RepairId"));
 
                     b.Property<int>("AssetId")
                         .HasColumnType("int");
 
-                    b.Property<string>("AssetName")
+                    b.Property<string>("InvoiceNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CompletionMessage")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal?>("RepairCost")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("RepairShopName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ReportedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("ReturnedDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("ReportedDate")
+                    b.Property<DateTime>("SentDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("IssueId");
+                    b.Property<string>("TechnicianName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Issues");
+                    b.Property<string>("TechnicianPhone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("RepairId");
+
+                    b.HasIndex("AssetId");
+
+                    b.ToTable("Repairs");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -348,47 +360,6 @@ namespace AssetTracker.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Repair", b =>
-                {
-                    b.Property<int>("RepairId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RepairId"));
-
-                    b.Property<string>("InvoiceNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("IssueId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("RepairCost")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("RepairDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("RepairNotes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TechnicianName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TechnicianPhone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("RepairId");
-
-                    b.HasIndex("IssueId")
-                        .IsUnique();
-
-                    b.ToTable("Repairs");
-                });
-
             modelBuilder.Entity("AssetTracker.Core.Models.AssetAssignment", b =>
                 {
                     b.HasOne("AssetTracker.Core.Models.Asset", "Asset")
@@ -406,6 +377,17 @@ namespace AssetTracker.Infrastructure.Migrations
                     b.Navigation("Asset");
 
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("AssetTracker.Core.Models.Repair", b =>
+                {
+                    b.HasOne("AssetTracker.Core.Models.Asset", "Asset")
+                        .WithMany()
+                        .HasForeignKey("AssetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Asset");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -457,20 +439,6 @@ namespace AssetTracker.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Repair", b =>
-                {
-                    b.HasOne("AssetTracker.Core.Models.Issue", null)
-                        .WithOne("Repair")
-                        .HasForeignKey("Repair", "IssueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("AssetTracker.Core.Models.Issue", b =>
-                {
-                    b.Navigation("Repair");
                 });
 #pragma warning restore 612, 618
         }

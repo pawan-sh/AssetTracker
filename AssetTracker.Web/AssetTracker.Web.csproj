@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AssetTracker.Core\AssetTracker.Core.csproj" />
     <ProjectReference Include="..\AssetTracker.Infrastructure\AssetTracker.Infrastructure.csproj" />
   </ItemGroup>
 

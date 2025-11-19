@@ -1,0 +1,34 @@
+﻿@model Repair
+
+<h2>Send Asset to Repair</h2>
+
+<form method="post">
+    <input type="hidden" asp-for="IssueId" value="@ViewBag.IssueId" />
+
+    <div class="mb-3">
+        <label>Technician Name</label>
+        <input asp-for="TechnicianName" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label>Phone Number</label>
+        <input asp-for="TechnicianPhone" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label>Invoice Number</label>
+        <input asp-for="InvoiceNumber" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label>Repair Cost</label>
+        <input asp-for="RepairCost" class="form-control" type="number" step="0.01" required />
+    </div>
+
+    <div class="mb-3">
+        <label>Repair Notes</label>
+        <textarea asp-for="RepairNotes" class="form-control"></textarea>
+    </div>
+
+    <button class="btn btn-success">Save</button>
+</form>

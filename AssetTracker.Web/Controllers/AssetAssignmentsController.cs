@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AssetTracker.Web.Controllers
 {
-    
+    [Authorize(Roles = "Admin")]
     public class AssetAssignmentsController : Controller
     {
         private readonly AssetTrackerDbContext _context;

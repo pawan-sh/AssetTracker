@@ -4,6 +4,7 @@ using AssetTracker.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetTracker.Infrastructure.Migrations
 {
     [DbContext(typeof(AssetTrackerDbContext))]
-    partial class AssetTrackerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251118160836_UpdateIssueTable")]
+    partial class UpdateIssueTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,7 +115,7 @@ namespace AssetTracker.Infrastructure.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("AssetTracker.Core.Models.Issue", b =>
+            modelBuilder.Entity("Issue", b =>
                 {
                     b.Property<int>("IssueId")
                         .ValueGeneratedOnAdd()
@@ -125,9 +128,6 @@ namespace AssetTracker.Infrastructure.Migrations
 
                     b.Property<string>("AssetName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CompletionMessage")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -461,14 +461,14 @@ namespace AssetTracker.Infrastructure.Migrations
 
             modelBuilder.Entity("Repair", b =>
                 {
-                    b.HasOne("AssetTracker.Core.Models.Issue", null)
+                    b.HasOne("Issue", null)
                         .WithOne("Repair")
                         .HasForeignKey("Repair", "IssueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("AssetTracker.Core.Models.Issue", b =>
+            modelBuilder.Entity("Issue", b =>
                 {
                     b.Navigation("Repair");
                 });

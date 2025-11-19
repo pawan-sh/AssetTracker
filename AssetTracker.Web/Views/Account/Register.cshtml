@@ -1,12 +1,12 @@
-﻿@model AssetTracker.Web.Models.LoginViewModel
+﻿@model AssetTracker.Web.Models.RegisterViewModel
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Register";
 }
 
 <div class="container mt-5" style="max-width:450px;">
-    <h2 class="text-center mb-4">Login</h2>
+    <h2 class="text-center mb-4">Register</h2>
 
-    <form asp-action="Login" method="post">
+    <form asp-action="Register" method="post">
         <div class="form-group mb-3">
             <label>Email</label>
             <input asp-for="Email" class="form-control" />
@@ -19,11 +19,13 @@
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">Login</button>
+        <div class="form-group mb-3">
+            <label>Confirm Password</label>
+            <input asp-for="ConfirmPassword" type="password" class="form-control" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
 
-        <p class="text-center mt-3">
-            <a asp-action="Register">Create new account</a>
-        </p>
+        <button type="submit" class="btn btn-success w-100">Register</button>
     </form>
 </div>
 

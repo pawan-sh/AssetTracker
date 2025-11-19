@@ -1,0 +1,35 @@
+﻿@model Repair
+
+<h2>Edit Repair Details</h2>
+
+<form method="post">
+    <input type="hidden" asp-for="RepairId" />
+    <input type="hidden" asp-for="IssueId" />
+
+    <div class="mb-3">
+        <label>Technician</label>
+        <input asp-for="TechnicianName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Phone</label>
+        <input asp-for="TechnicianPhone" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Cost</label>
+        <input asp-for="RepairCost" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Date</label>
+        <input asp-for="RepairDate" type="date" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Notes</label>
+        <textarea asp-for="RepairNotes" class="form-control"></textarea>
+    </div>
+
+    <button class="btn btn-primary">Save</button>
+</form>

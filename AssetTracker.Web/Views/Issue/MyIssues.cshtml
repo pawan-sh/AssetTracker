@@ -1,0 +1,82 @@
+﻿@model IEnumerable<AssetTracker.Core.Models.Issue>
+
+<h2>My Reported Issues</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">You have not reported any issues yet.</div>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Asset</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Reported</th>
+                <th>Admin Message</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td>@item.AssetName</td>
+                    <td>@item.Description</td>
+                    <td>
+                        @if (item.Status == "Pending")
+                        {
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                        else if (item.Status == "InRepair")
+                        {
+                            <span class="badge bg-info text-dark">In Repair</span>
+                        }
+                        else if (item.Status == "Completed")
+                        {
+                            <span class="badge bg-success">Completed</span>
+                        }
+                    </td>
+                    <td>@item.ReportedDate.ToString("dd-MMM-yyyy")</td>
+
+                    <!-- ⭐ ADMIN MESSAGE COLUMN -->
+                    <td>
+                        @if (item.Status == "Completed" && !string.IsNullOrEmpty(item.CompletionMessage))
+                        {
+                            <span class="text-success">
+                                <b>@item.CompletionMessage</b>
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">—</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Status == "Completed" || item.Status == "Pending")
+                        {
+                            <form asp-controller="Issue"
+                                  asp-action="Delete"
+                                  method="post"
+                                  style="display:inline;"
+                                  onsubmit="return confirm('Are you sure you want to delete this issue?');">
+
+                                <input type="hidden" name="id" value="@item.IssueId" />
+
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Not allowed</span>
+                        }
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
