@@ -3,15 +3,19 @@ using AssetTracker.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using AssetTracker.Web.Services;
+
 
 [Authorize]
 public class IssueController : Controller
 {
     private readonly AssetTrackerDbContext _ctx;
+    private readonly EventGridService _eventGrid;   // <-- new
 
-    public IssueController(AssetTrackerDbContext ctx)
+    public IssueController(AssetTrackerDbContext ctx, EventGridService eventGrid)
     {
         _ctx = ctx;
+        _eventGrid = eventGrid;                    // <-- new
     }
 
     // Report Issue (Employee)
@@ -46,10 +50,9 @@ public class IssueController : Controller
 
         return View(issue);
     }
-
-    // Mark repair as completed
+    //Mark Issue as Completed
     [HttpPost]
-    public IActionResult MarkCompleted(int id, string message)
+    public async Task<IActionResult> MarkCompleted(int id, string message)
     {
         var issue = _ctx.Issues.FirstOrDefault(i => i.IssueId == id);
 
@@ -61,8 +64,19 @@ public class IssueController : Controller
 
         _ctx.SaveChanges();
 
+        // ⭐ Send event to Event Grid so Logic App can email employee
+        await _eventGrid.PublishEventAsync("Asset.RepairCompleted", new
+        {
+            IssueId = issue.IssueId,
+            AssetName = issue.AssetName,
+            EmployeeEmail = issue.ReportedBy,   // you might map email differently
+            Message = message,
+            CompletedOn = DateTime.UtcNow
+        });
+
         return RedirectToAction("List");
     }
+
 
     [HttpPost]
     public IActionResult Delete(int id)

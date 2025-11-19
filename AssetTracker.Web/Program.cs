@@ -1,6 +1,8 @@
 ﻿using AssetTracker.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using AssetTracker.Web.Services;
+
 
 namespace AssetTracker.Web
 {
@@ -32,6 +34,13 @@ namespace AssetTracker.Web
 
             // Add MVC services
             builder.Services.AddControllersWithViews();
+
+           
+
+            // 🔹 Add Event Grid service
+            builder.Services.AddSingleton<EventGridService>();
+
+
 
             var app = builder.Build();
 
