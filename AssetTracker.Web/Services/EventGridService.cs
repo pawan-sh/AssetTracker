@@ -1,4 +1,5 @@
 ﻿using Azure;
+using Azure.Identity;
 using Azure.Messaging.EventGrid;
 using System.Text.Json;
 
@@ -22,9 +23,9 @@ namespace AssetTracker.Web.Services
                 return; // fail-safe: don't crash if not configured
 
             var client = new EventGridPublisherClient(
-                new Uri(_endpoint),
-                new AzureKeyCredential(_key)
-            );
+            new Uri(_endpoint),
+            new DefaultAzureCredential()
+             ); 
 
             var evt = new EventGridEvent(
                 subject: "AssetTracker/Notification",
