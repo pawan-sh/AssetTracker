@@ -74,7 +74,8 @@ namespace AssetTracker.Web.Controllers
 
                 // Update asset status
                 var asset = await _context.Assets.FindAsync(assetAssignment.AssetId);
-                asset.Status = "Assigned";
+                if (asset != null)
+                    asset.Status = "Assigned";
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -126,7 +127,8 @@ namespace AssetTracker.Web.Controllers
                 if (assignment.ReturnedDate != null)
                 {
                     var asset = await _context.Assets.FindAsync(assignment.AssetId);
-                    asset.Status = "Available";
+                    if (asset != null)
+                        asset.Status = "Available";
                 }
 
                 await _context.SaveChangesAsync();
@@ -159,11 +161,14 @@ namespace AssetTracker.Web.Controllers
         public async Task<IActionResult> ReturnConfirmed(int id)
         {
             var assignment = await _context.AssetAssignments.FindAsync(id);
+            if (assignment == null)
+                return NotFound();
 
             assignment.ReturnedDate = DateTime.Now;
 
             var asset = await _context.Assets.FindAsync(assignment.AssetId);
-            asset.Status = "Available";
+            if (asset != null)
+                asset.Status = "Available";
 
             await _context.SaveChangesAsync();
 

@@ -29,7 +29,7 @@ public class IssueController : Controller
     public IActionResult Create(Issue issue)
     {
         issue.ReportedDate = DateTime.Now;
-        issue.ReportedBy = User.Identity.Name;
+        issue.ReportedBy = User.Identity?.Name ?? "Unknown";
         issue.Status = "Pending";
 
         _ctx.Issues.Add(issue);
@@ -101,7 +101,7 @@ public class IssueController : Controller
     // Employee: My Issues
     public IActionResult MyIssues()
     {
-        var user = User.Identity.Name;
+        var user = User.Identity?.Name ?? "";
 
         var issues = _ctx.Issues
             .Include(i => i.Repair)

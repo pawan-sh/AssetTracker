@@ -20,9 +20,9 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@($"{item.Asset.AssetType} - {item.Asset.Brand} {item.Asset.Model} (SN: {item.Asset.SerialNumber})")</td>
+                <td>@($"{item.Asset?.AssetType} - {item.Asset?.Brand} {item.Asset?.Model} (SN: {item.Asset?.SerialNumber})")</td>
 
-                <td>@item.Employee.Name</td>
+                <td>@item.Employee?.Name</td>
                 <td>@item.AssignedDate.ToShortDateString()</td>
                 <td>@(item.ReturnedDate?.ToShortDateString() ?? "Not Returned")</td>
                 <td>

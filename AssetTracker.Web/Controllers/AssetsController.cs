@@ -122,8 +122,11 @@ namespace AssetTracker.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var asset = await _context.Assets.FindAsync(id);
-            _context.Assets.Remove(asset);
-            await _context.SaveChangesAsync();
+            if (asset != null)
+            {
+                _context.Assets.Remove(asset);
+                await _context.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(Index));
         }
     }
