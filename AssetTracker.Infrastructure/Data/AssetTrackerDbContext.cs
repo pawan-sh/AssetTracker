@@ -21,5 +21,19 @@ namespace AssetTracker.Infrastructure.Data
 
         public DbSet<Issue> Issues { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Configure decimal precision for RepairCost
+            modelBuilder.Entity<Repair>()
+                .Property(r => r.RepairCost)
+                .HasPrecision(18, 2);
+
+            // Configure decimal precision for Issue.Cost
+            modelBuilder.Entity<Issue>()
+                .Property(i => i.Cost)
+                .HasPrecision(18, 2);
+        }
     }
 }

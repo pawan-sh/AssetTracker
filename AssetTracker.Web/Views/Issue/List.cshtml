@@ -1,126 +1,124 @@
 ﻿@using AssetTracker.Core.Models
 @model IEnumerable<Issue>
 
-<h2>All Reported Issues</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-dark">Reported Issues</h2>
+</div>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Asset</th>
-            <th>Description</th>
-            <th>Reported By</th>
-            <th>Status</th>
-            <th>Repair Details</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div class="table-responsive">
+    <table class="table table-custom">
+        <thead>
             <tr>
-                <td>@item.AssetName</td>
-                <td>@item.Description</td>
-                <td>@item.ReportedBy</td>
+                <th>Asset</th>
+                <th>Description</th>
+                <th>Reported By</th>
+                <th>Status</th>
+                <th>Repair Details</th>
+                <th>Action</th>
+            </tr>
+        </thead>
 
-                <!-- STATUS BADGES -->
-                <td>
-                    @if (item.Status == "Pending")
-                    {
-                        <span class="badge bg-warning text-dark">Pending</span>
-                    }
-                    else if (item.Status == "InRepair")
-                    {
-                        <span class="badge bg-info">In Repair</span>
-                    }
-                    else if (item.Status == "Completed")
-                    {
-                        <span class="badge bg-success">Completed</span>
-                    }
-                </td>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="fw-bold">@item.AssetName</td>
+                    <td>@item.Description</td>
+                    <td>@item.ReportedBy</td>
 
-                <!-- VIEW DETAILS BUTTON -->
-                <td>
-                    @if (item.Repair != null)
-                    {
-                        <a asp-controller="Issue"
-                           asp-action="RepairDetails"
-                           asp-route-id="@item.IssueId"
-                           class="btn btn-outline-primary btn-sm">
-                            View Details
-                        </a>
-                    }
-                    else
-                    {
-                        <span class="text-muted">Not Available</span>
-                    }
-                </td>
-
-                <!-- ACTION BUTTONS -->
-                <td>
-                    @if (item.Status == "Pending")
-                    {
-                        <a class="btn btn-warning btn-sm"
-                           asp-controller="Repair"
-                           asp-action="Create"
-                           asp-route-issueId="@item.IssueId">
-                            Send to Repair
-                        </a>
-                    }
-                    else if (item.Status == "InRepair")
-                    {
-                        <a class="btn btn-info btn-sm"
-                           asp-controller="Issue"
-                           asp-action="Details"
-                           asp-route-id="@item.IssueId">
-                            View Details
-                        </a>
-
-                        <a class="btn btn-secondary btn-sm"
-                           asp-controller="Repair"
-                           asp-action="Edit"
-                           asp-route-id="@item.Repair.RepairId">
-                            Edit Repair
-                        </a>
-
-                        <!-- ⭐ NEW BUTTON: Mark Completed -->
-                        <form asp-controller="Issue"
-                              asp-action="MarkCompleted"
-                              method="post"
-                              style="display:inline;">
-
-                            <input type="hidden" name="id" value="@item.IssueId" />
-
-                            <input type="text"
-                                   name="message"
-                                   class="form-control form-control-sm d-inline-block"
-                                   style="width:200px;"
-                                   placeholder="Completion message" required />
-
-                            <button type="submit"
-                                    class="btn btn-success btn-sm mt-1">
-                                Mark Completed
-                            </button>
-                        </form>
-
-                    }
-                    else if (item.Status == "Completed")
-                    {
-                        <span class="badge bg-success">Completed</span>
-
-                        @* Show message to admin if exists *@
-                        @if (!string.IsNullOrEmpty(item.CompletionMessage))
+                    <!-- STATUS BADGES -->
+                    <td>
+                        @if (item.Status == "Pending")
                         {
-                            <div class="text-muted" style="font-size: 12px;">
-                                <b>Message:</b> @item.CompletionMessage
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                        else if (item.Status == "InRepair")
+                        {
+                            <span class="badge bg-info">In Repair</span>
+                        }
+                        else if (item.Status == "Completed")
+                        {
+                            <span class="badge bg-success">Completed</span>
+                        }
+                    </td>
+
+                    <!-- VIEW DETAILS BUTTON -->
+                    <td>
+                        @if (item.Repair != null)
+                        {
+                            <a asp-controller="Issue"
+                               asp-action="RepairDetails"
+                               asp-route-id="@item.IssueId"
+                               class="btn btn-outline-primary btn-sm">
+                                View Details
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted small">Not Available</span>
+                        }
+                    </td>
+
+                    <!-- ACTION BUTTONS -->
+                    <td>
+                        @if (item.Status == "Pending")
+                        {
+                            <div class="d-flex flex-column gap-2">
+                                <a class="btn btn-warning btn-sm"
+                                   asp-controller="Repair"
+                                   asp-action="Create"
+                                   asp-route-issueId="@item.IssueId">
+                                    <i class="bi bi-tools"></i> Send to Repair
+                                </a>
+                                <form asp-action="StartInternalRepair" method="post">
+                                    <input type="hidden" name="id" value="@item.IssueId" />
+                                    <button type="submit" class="btn btn-info btn-sm text-white w-100">
+                                        <i class="bi bi-person-badge"></i> Internal Fix
+                                    </button>
+                                </form>
                             </div>
                         }
-                    }
-                </td>
+                        else if (item.Status == "InRepair" || item.Status == "In Progress")
+                        {
+                            <div class="d-flex flex-column gap-2">
+                                @if (item.Status == "InRepair")
+                                {
+                                    <span class="badge bg-info mb-1">External Repair</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-primary mb-1">Internal Fix</span>
+                                }
 
-
-
-            </tr>
-        }
-    </tbody>
-</table>
+                                <a class="btn btn-success btn-sm"
+                                   asp-controller="Issue"
+                                   asp-action="Close"
+                                   asp-route-id="@item.IssueId">
+                                    <i class="bi bi-check-lg"></i> Close Issue
+                                </a>
+                            </div>
+                        }
+                        else if (item.Status == "Completed")
+                        {
+                            <span class="badge bg-success">Completed</span>
+                            @if (!string.IsNullOrEmpty(item.Resolution))
+                            {
+                                <div class="small text-muted mt-1">
+                                    <strong>Resolution:</strong> @item.Resolution
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(item.InvoicePath))
+                            {
+                                <div class="mt-1">
+                                    <a href="@item.InvoicePath" target="_blank" class="btn btn-sm btn-outline-secondary py-0" style="font-size: 0.75rem;">
+                                        <i class="bi bi-paperclip"></i> Invoice
+                                    </a>
+                                </div>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

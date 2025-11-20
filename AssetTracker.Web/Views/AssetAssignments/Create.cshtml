@@ -1,17 +1,56 @@
 ﻿@model AssetTracker.Core.Models.AssetAssignment
 
-<h2>Assign Asset</h2>
+@{
+    ViewData["Title"] = "Assign Asset";
+}
 
-<form asp-action="Create">
-    <div class="form-group">
-        <label>Employee</label>
-        <select asp-for="EmployeeId" asp-items="ViewBag.EmployeeId" class="form-control"></select>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Assign Asset</h1>
+        <a asp-action="Index" class="btn btn-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
     </div>
 
-    <div class="form-group mt-3">
-        <label>Asset</label>
-        <select asp-for="AssetId" asp-items="ViewBag.AssetId" class="form-control"></select>
-    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">New Assignment Details</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-    <button type="submit" class="btn btn-primary mt-3">Assign</button>
-</form>
+                        <div class="mb-3">
+                            <label asp-for="EmployeeId" class="form-label">Employee</label>
+                            <select asp-for="EmployeeId" class="form-select" asp-items="ViewBag.EmployeeId">
+                                <option value="">-- Select Employee --</option>
+                            </select>
+                            <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="AssetId" class="form-label">Asset</label>
+                            <select asp-for="AssetId" class="form-select" asp-items="ViewBag.AssetId">
+                                <option value="">-- Select Asset --</option>
+                            </select>
+                            <span asp-validation-for="AssetId" class="text-danger"></span>
+                            <small class="form-text text-muted">Only 'Available' assets are shown.</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Assign Asset
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

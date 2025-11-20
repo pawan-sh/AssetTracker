@@ -54,9 +54,16 @@ namespace AssetTracker.Web.Controllers
             ViewData["EmployeeId"] =
                 new SelectList(_context.Employees, "EmployeeId", "Name");
 
-            ViewData["AssetId"] =
-                new SelectList(_context.Assets.Where(a => a.Status == "Available"),
-                    "AssetId", "SerialNumber");
+            var availableAssets = _context.Assets
+                .Where(a => a.Status == "Available")
+                .Select(a => new
+                {
+                    a.AssetId,
+                    DisplayText = $"{a.AssetType} - {a.Brand} {a.Model} (SN: {a.SerialNumber})"
+                })
+                .ToList();
+
+            ViewData["AssetId"] = new SelectList(availableAssets, "AssetId", "DisplayText");
 
             return View();
         }
@@ -66,6 +73,10 @@ namespace AssetTracker.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AssetAssignment assetAssignment)
         {
+            // Remove navigation properties from validation
+            ModelState.Remove("Asset");
+            ModelState.Remove("Employee");
+
             if (ModelState.IsValid)
             {
                 assetAssignment.AssignedDate = DateTime.Now;
@@ -74,7 +85,8 @@ namespace AssetTracker.Web.Controllers
 
                 // Update asset status
                 var asset = await _context.Assets.FindAsync(assetAssignment.AssetId);
-                asset.Status = "Assigned";
+                if (asset != null)
+                    asset.Status = "Assigned";
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -83,9 +95,16 @@ namespace AssetTracker.Web.Controllers
             ViewData["EmployeeId"] =
                 new SelectList(_context.Employees, "EmployeeId", "Name", assetAssignment.EmployeeId);
 
-            ViewData["AssetId"] =
-                new SelectList(_context.Assets.Where(a => a.Status == "Available"),
-                    "AssetId", "SerialNumber", assetAssignment.AssetId);
+            var availableAssets = _context.Assets
+                .Where(a => a.Status == "Available" || a.AssetId == assetAssignment.AssetId) // Include currently selected even if assigned (in case of error)
+                .Select(a => new
+                {
+                    a.AssetId,
+                    DisplayText = $"{a.AssetType} - {a.Brand} {a.Model} (SN: {a.SerialNumber})"
+                })
+                .ToList();
+
+            ViewData["AssetId"] = new SelectList(availableAssets, "AssetId", "DisplayText", assetAssignment.AssetId);
 
             return View(assetAssignment);
         }
@@ -126,7 +145,8 @@ namespace AssetTracker.Web.Controllers
                 if (assignment.ReturnedDate != null)
                 {
                     var asset = await _context.Assets.FindAsync(assignment.AssetId);
-                    asset.Status = "Available";
+                    if (asset != null)
+                        asset.Status = "Available";
                 }
 
                 await _context.SaveChangesAsync();
@@ -159,11 +179,14 @@ namespace AssetTracker.Web.Controllers
         public async Task<IActionResult> ReturnConfirmed(int id)
         {
             var assignment = await _context.AssetAssignments.FindAsync(id);
+            if (assignment == null)
+                return NotFound();
 
             assignment.ReturnedDate = DateTime.Now;
 
             var asset = await _context.Assets.FindAsync(assignment.AssetId);
-            asset.Status = "Available";
+            if (asset != null)
+                asset.Status = "Available";
 
             await _context.SaveChangesAsync();
 

@@ -1,101 +1,259 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@model AssetTracker.Web.Models.DashboardViewModel
+
+@{
     ViewData["Title"] = "Home";
-    ViewData["FullWidth"] = true;   // IMPORTANT FOR FULLSCREEN
 }
 
-<style>
-    html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100%;
-        height: 100%;
-        overflow-x: hidden;
-        background: transparent !important;
-    }
+@if (SignInManager.IsSignedIn(User) && Model != null)
+{
+    ViewData["FullWidth"] = false; // Use container layout for dashboard
 
-    .hero-fullscreen {
-        position: relative;
-        width: 100vw;
-        height: 100vh; /* FULL SCREEN NOW */
-        margin-left: calc(50% - 50vw);
-        background: url('/images/dashboard-bg.jpg') no-repeat center center / cover;
-    }
-
-    .hero-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.55);
-        z-index: 1;
-    }
-
-    .hero-content {
-        position: relative;
-        z-index: 2;
-        max-width: 650px;
-        padding: 120px 70px;
-        color: white;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-
-    .logo-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 30px;
-    }
-
-    .logo-image {
-        height: 65px;
-        width: auto;
-    }
-
-    .eyebrow {
-        font-size: 18px;
-        opacity: 0.85;
-        margin-bottom: 10px;
-    }
-
-    .title {
-        font-size: 56px;
-        font-weight: 800;
-        line-height: 1.1;
-        margin-bottom: 15px;
-    }
-
-    .subtitle {
-        font-size: 20px;
-        opacity: 0.9;
-        margin-bottom: 30px;
-    }
-
-    .btn-custom {
-        padding: 14px 28px;
-        font-size: 18px;
-        border-radius: 8px;
-        margin-right: 12px;
-        min-width: 200px;
-    }
-</style>
-
-<div class="hero-fullscreen">
-    <div class="hero-overlay"></div>
-
-    <div class="hero-content">
-
-        <div class="logo-wrapper">
-            <img src="/images/main-logo.svg" class="logo-image" alt="Enkaytech Logo" />
+    <div class="d-flex justify-content-between align-items-center mb-5 animate-in">
+        <div>
+            <h1 class="page-title mb-2">Dashboard</h1>
+            <p class="text-muted fs-5">
+                <i class="bi bi-emoji-smile"></i> Welcome back, <strong>@User.Identity?.Name</strong>
+            </p>
         </div>
-
-        <div class="eyebrow">Asset Management Portal</div>
-
-        <div class="title">Admin Dashboard for IT Teams</div>
-
-        <div class="subtitle">
-            Track assets, monitor assignments, and manage employee devices — all in one secure place.
+        <div>
+            <a asp-controller="Issue" asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>Report Issue
+            </a>
         </div>
-
-        <a href="/Assets" class="btn btn-primary btn-custom">Manage Assets</a>
-        <a href="/Employees" class="btn btn-light btn-custom">View Employees</a>
     </div>
-</div>
+
+    <div class="row g-4 mb-5">
+        <!-- Total Assets -->
+        <div class="col-md-4 animate-in" style="animation-delay: 0.1s;">
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="icon-wrapper" style="background: #dbeafe; width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-box-seam fs-4" style="color: #2563eb;"></i>
+                    </div>
+                </div>
+                <h3>@Model.TotalAssets</h3>
+                <p>Total Assets</p>
+            </div>
+        </div>
+
+        <!-- Assigned -->
+        <div class="col-md-4 animate-in" style="animation-delay: 0.2s;">
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="icon-wrapper" style="background: #d1fae5; width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-check-circle fs-4" style="color: #10b981;"></i>
+                    </div>
+                </div>
+                <h3>@Model.AssignedAssets</h3>
+                <p>Assigned Assets</p>
+            </div>
+        </div>
+
+        <!-- Available -->
+        <div class="col-md-4 animate-in" style="animation-delay: 0.3s;">
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="icon-wrapper" style="background: #e0e7ff; width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-clock-history fs-4" style="color: #6366f1;"></i>
+                    </div>
+                </div>
+                <h3>@Model.AvailableAssets</h3>
+                <p>Available Assets</p>
+            </div>
+        </div>
+
+        <!-- Pending Issues -->
+        <div class="col-md-4 animate-in" style="animation-delay: 0.4s;">
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="icon-wrapper" style="background: #fef3c7; width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-exclamation-triangle fs-4" style="color: #f59e0b;"></i>
+                    </div>
+                </div>
+                <h3>@Model.PendingIssues</h3>
+                <p>Pending Issues</p>
+            </div>
+        </div>
+
+        <!-- Completed Repairs -->
+        <div class="col-md-4 animate-in" style="animation-delay: 0.5s;">
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="icon-wrapper" style="background: #ddd6fe; width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-tools fs-4" style="color: #8b5cf6;"></i>
+                    </div>
+                </div>
+                <h3>@Model.CompletedRepairs</h3>
+                <p>Completed Repairs</p>
+            </div>
+        </div>
+
+        <!-- Employees -->
+        <div class="col-md-4 animate-in" style="animation-delay: 0.6s;">
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="icon-wrapper" style="background: #fee2e2; width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-people fs-4" style="color: #dc2626;"></i>
+                    </div>
+                </div>
+                <h3>@Model.TotalEmployees</h3>
+                <p>Total Employees</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row animate-in" style="animation-delay: 0.7s;">
+        <div class="col-md-12">
+            <div class="card border-0 p-4 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0 fw-bold" style="color: #1e293b;">
+                        <i class="bi bi-lightning-charge-fill me-2" style="color: #2563eb;"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <a asp-controller="Assets" asp-action="Index" class="text-decoration-none">
+                            <div class="p-4 rounded-3 text-center border" style="background: white; border-color: #e2e8f0 !important; transition: all 0.2s ease;">
+                                <i class="bi bi-box-seam fs-1 mb-2" style="color: #2563eb;"></i>
+                                <h6 class="mb-0 fw-bold" style="color: #1e293b;">Manage Assets</h6>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a asp-controller="Employees" asp-action="Index" class="text-decoration-none">
+                            <div class="p-4 rounded-3 text-center border" style="background: white; border-color: #e2e8f0 !important; transition: all 0.2s ease;">
+                                <i class="bi bi-people fs-1 mb-2" style="color: #10b981;"></i>
+                                <h6 class="mb-0 fw-bold" style="color: #1e293b;">View Employees</h6>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a asp-controller="AssetAssignments" asp-action="Index" class="text-decoration-none">
+                            <div class="p-4 rounded-3 text-center border" style="background: white; border-color: #e2e8f0 !important; transition: all 0.2s ease;">
+                                <i class="bi bi-clipboard-check fs-1 mb-2" style="color: #6366f1;"></i>
+                                <h6 class="mb-0 fw-bold" style="color: #1e293b;">Assignments</h6>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        .col-md-4 > a > div:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: #f8fafc !important;
+        }
+    </style>
+}
+else
+{
+    ViewData["FullWidth"] = true;   // IMPORTANT FOR FULLSCREEN
+
+    <style>
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            background: transparent !important;
+        }
+        /* ... existing styles ... */
+        .hero-fullscreen {
+            position: relative;
+            width: 100vw;
+            height: 100vh; /* FULL SCREEN NOW */
+            margin-left: calc(50% - 50vw);
+            background: url('/images/dashboard-bg.jpg') no-repeat center center / cover;
+        }
+        /* ... rest of existing styles ... */
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 650px;
+            padding: 120px 70px;
+            color: white;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .logo-image {
+            height: 65px;
+            width: auto;
+        }
+
+        .eyebrow {
+            font-size: 18px;
+            opacity: 0.85;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .btn-custom {
+            padding: 14px 28px;
+            font-size: 18px;
+            border-radius: 8px;
+            margin-right: 12px;
+            min-width: 200px;
+        }
+    </style>
+
+    <div class="hero-fullscreen">
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+
+            <div class="logo-wrapper">
+                <img src="/images/main-logo.svg" class="logo-image" alt="Enkaytech Logo" />
+            </div>
+
+            <div class="eyebrow">Asset Management Portal</div>
+
+            <div class="title">Admin Dashboard for IT Teams</div>
+
+            <div class="subtitle">
+                Track assets, monitor assignments, and manage employee devices — all in one secure place.
+            </div>
+
+            <div class="d-flex gap-3">
+                <a href="/Account/Login" class="btn btn-primary btn-custom">
+                    <i class="bi bi-shield-lock me-2"></i> Admin Login
+                </a>
+                <a href="/Account/EmployeeLogin" class="btn btn-success btn-custom">
+                    <i class="bi bi-person-badge me-2"></i> Employee Login
+                </a>
+            </div>
+        </div>
+    </div>
+}
