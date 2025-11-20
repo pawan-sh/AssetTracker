@@ -1,17 +1,22 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AssetTracker.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 public class AccountController : Controller
 {
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly AssetTrackerDbContext _context;
 
     public AccountController(SignInManager<IdentityUser> signInManager,
-                             UserManager<IdentityUser> userManager)
+                             UserManager<IdentityUser> userManager,
+                             AssetTrackerDbContext context)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _context = context;
     }
 
     [Authorize]
@@ -37,6 +42,60 @@ public class AccountController : Controller
             return RedirectToAction("Index", "Home");
 
         ViewBag.Error = "Invalid login attempt!";
+        return View();
+    }
+
+    // EMPLOYEE LOGIN (GET)
+    public IActionResult EmployeeLogin()
+    {
+        return View();
+    }
+
+    // EMPLOYEE LOGIN (POST)
+    [HttpPost]
+    public async Task<IActionResult> EmployeeLogin(string email)
+    {
+        // 1. Check if Identity User exists
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user == null)
+        {
+            // 2. If not, check if they are a valid Employee in the database
+            var employeeExists = await _context.Employees.AnyAsync(e => e.Email == email);
+
+            if (employeeExists)
+            {
+                // 3. Auto-register them as an Identity User
+                user = new IdentityUser { UserName = email, Email = email };
+                var createResult = await _userManager.CreateAsync(user, email); // Password = Email
+
+                if (createResult.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "Employee");
+                }
+                else
+                {
+                    var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+                    ViewBag.Error = $"Error creating account: {errors}";
+                    return View();
+                }
+            }
+            else
+            {
+                ViewBag.Error = "Employee email not found in the system.";
+                return View();
+            }
+        }
+
+        // 4. Sign in
+        var result = await _signInManager.PasswordSignInAsync(user, email, false, false);
+
+        if (result.Succeeded)
+        {
+            return RedirectToAction("MyAssets", "Issue");
+        }
+
+        ViewBag.Error = "Login failed. Please ensure your account is set up correctly.";
         return View();
     }
 

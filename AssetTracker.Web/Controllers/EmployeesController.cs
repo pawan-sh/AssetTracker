@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using AssetTracker.Core.Models;
 using AssetTracker.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace AssetTracker.Web.Controllers
 {
@@ -13,16 +14,28 @@ namespace AssetTracker.Web.Controllers
     public class EmployeesController : Controller
     {
         private readonly AssetTrackerDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public EmployeesController(AssetTrackerDbContext context)
+        public EmployeesController(AssetTrackerDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Employees
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Employees.ToListAsync());
+            var employees = from e in _context.Employees
+                            select e;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                employees = employees.Where(s => s.Name.Contains(searchString)
+                                              || s.Email.Contains(searchString)
+                                              || s.Department.Contains(searchString));
+            }
+
+            return View(await employees.ToListAsync());
         }
 
         // GET: Employees/Details/5
@@ -53,6 +66,16 @@ namespace AssetTracker.Web.Controllers
             {
                 _context.Add(employee);
                 await _context.SaveChangesAsync();
+
+                // Create Identity User for Employee (Email = Username = Password)
+                var user = new IdentityUser { UserName = employee.Email, Email = employee.Email };
+                var result = await _userManager.CreateAsync(user, employee.Email); // Password is same as Email
+
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "Employee");
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             return View(employee);

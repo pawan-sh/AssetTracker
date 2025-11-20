@@ -1,65 +1,73 @@
 ﻿@model IEnumerable<AssetTracker.Core.Models.Asset>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Assets";
 }
 
-<h1>Index</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-dark">Assets Inventory</h2>
+    <a asp-action="Create" class="btn btn-primary">+ Add New Asset</a>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.AssetType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Brand)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Model)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SerialNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PurchaseDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.AssetType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Brand)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Model)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SerialNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PurchaseDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.AssetId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.AssetId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.AssetId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<!-- Search Bar -->
+<div class="search-container">
+    <form asp-action="Index" method="get" class="row g-3">
+        <div class="col-md-10">
+            <input type="text" name="searchString" class="form-control" placeholder="Search by Type, Brand, Model, or Serial Number..." value="@ViewData["CurrentFilter"]" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-dark w-100">Search</button>
+        </div>
+    </form>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-custom">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Brand & Model</th>
+                <th>Serial Number</th>
+                <th>Purchase Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.AssetType</td>
+                    <td>
+                        <span class="fw-bold">@item.Brand</span> @item.Model
+                    </td>
+                    <td><code>@item.SerialNumber</code></td>
+                    <td>@(item.PurchaseDate?.ToShortDateString() ?? "N/A")</td>
+                    <td>
+                        @if (item.Status == "Available")
+                        {
+                            <span class="badge badge-custom badge-available">Available</span>
+                        }
+                        else if (item.Status == "Assigned")
+                        {
+                            <span class="badge badge-custom badge-assigned">Assigned</span>
+                        }
+                        else if (item.Status == "InRepair")
+                        {
+                            <span class="badge badge-custom badge-repair">In Repair</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-custom badge-broken">@item.Status</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.AssetId" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.AssetId" class="btn btn-sm btn-outline-info">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.AssetId" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

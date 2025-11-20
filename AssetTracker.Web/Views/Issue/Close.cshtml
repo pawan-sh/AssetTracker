@@ -1,0 +1,78 @@
+@model AssetTracker.Core.Models.Issue
+
+@{
+    ViewData["Title"] = "Close Issue";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Close Issue #@Model.IssueId</h1>
+        <a asp-action="List" class="btn btn-secondary btn-sm">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 bg-success text-white">
+                    <h6 class="m-0 font-weight-bold">Resolution Details</h6>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-4">
+                        <dt class="col-sm-3">Asset</dt>
+                        <dd class="col-sm-9">@Model.AssetName</dd>
+
+                        <dt class="col-sm-3">Reported By</dt>
+                        <dd class="col-sm-9">@Model.ReportedBy</dd>
+
+                        <dt class="col-sm-3">Description</dt>
+                        <dd class="col-sm-9">@Model.Description</dd>
+                    </dl>
+
+                    <hr />
+
+                    <form asp-action="Close" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="id" value="@Model.IssueId" />
+
+                        <div class="mb-3">
+                            <label for="resolution" class="form-label fw-bold">Resolution / Action Taken</label>
+                            <textarea name="resolution" class="form-control" rows="3" required placeholder="What was done to fix the issue?"></textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="cost" class="form-label fw-bold">Repair Cost</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" name="cost" class="form-control" step="0.01" placeholder="0.00" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="invoiceReference" class="form-label fw-bold">Invoice Reference / Number</label>
+                                <input type="text" name="invoiceReference" class="form-control" placeholder="e.g. INV-2025-001" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="invoiceFile" class="form-label fw-bold">Attach Invoice <span class="text-muted">(Optional)</span></label>
+                            <input type="file" name="invoiceFile" class="form-control" accept=".pdf,.jpg,.jpeg,.png" />
+                            <small class="text-muted">Supported formats: PDF, JPG, PNG</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="message" class="form-label fw-bold">Message to Employee</label>
+                            <textarea name="message" class="form-control" rows="2" placeholder="Optional message to the employee..."></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle-fill"></i> Close Issue & Save
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

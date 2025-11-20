@@ -21,9 +21,21 @@ namespace AssetTracker.Web.Controllers
         }
 
         // GET: Assets
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Assets.ToListAsync());
+            var assets = from a in _context.Assets
+                         select a;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                assets = assets.Where(s => s.AssetType.Contains(searchString)
+                                       || s.Brand.Contains(searchString)
+                                       || s.Model.Contains(searchString)
+                                       || (s.SerialNumber != null && s.SerialNumber.Contains(searchString)));
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+            return View(await assets.ToListAsync());
         }
 
         // GET: Assets/Details/5
@@ -44,6 +56,8 @@ namespace AssetTracker.Web.Controllers
         // GET: Assets/Create
         public IActionResult Create()
         {
+            ViewBag.AssetTypes = new List<string> { "Laptop", "Desktop", "Monitor", "Phone", "Tablet", "Printer", "Accessory", "Other" };
+            ViewBag.Statuses = new List<string> { "Available", "In Use", "Broken", "In Repair", "Retired" };
             return View();
         }
 
@@ -58,6 +72,8 @@ namespace AssetTracker.Web.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.AssetTypes = new List<string> { "Laptop", "Desktop", "Monitor", "Phone", "Tablet", "Printer", "Accessory", "Other" };
+            ViewBag.Statuses = new List<string> { "Available", "In Use", "Broken", "In Repair", "Retired" };
             return View(asset);
         }
 
@@ -122,8 +138,11 @@ namespace AssetTracker.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var asset = await _context.Assets.FindAsync(id);
-            _context.Assets.Remove(asset);
-            await _context.SaveChangesAsync();
+            if (asset != null)
+            {
+                _context.Assets.Remove(asset);
+                await _context.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(Index));
         }
     }

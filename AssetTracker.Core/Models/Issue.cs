@@ -12,6 +12,10 @@
         public Repair? Repair { get; set; }
 
         public string? CompletionMessage { get; set; }
+        public string? Resolution { get; set; }
+        public decimal? Cost { get; set; }
+        public string? InvoiceReference { get; set; }
+        public string? InvoicePath { get; set; }
 
     }
 }

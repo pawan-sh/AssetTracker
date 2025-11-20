@@ -24,7 +24,7 @@ namespace AssetTracker.Web.Services
 
             var client = new EventGridPublisherClient(
             new Uri(_endpoint),
-            new DefaultAzureCredential()
+            new AzureKeyCredential(_key)
              ); 
 
             var evt = new EventGridEvent(
