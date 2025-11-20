@@ -1,0 +1,53 @@
+﻿namespace AssetTracker.Web.wwwroot.css
+{
+    public class theme
+{
+    body
+
+{
+    background: #f4f7fa;
+    font-family: 'Inter', sans-serif;
+}
+
+.navbar {
+    background: #0057b8 !important;
+}
+
+.navbar-brand, .nav-link, .dropdown-toggle {
+    color: #fff !important;
+    font-weight: 500;
+}
+
+.table th {
+    background: #f1f4f9;
+    font-weight: 600;
+}
+
+.card {
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.06);
+}
+
+.btn-primary {
+    background: #0057b8;
+    border-color: #0057b8;
+    border-radius: 8px;
+}
+
+.btn-success {
+    border-radius: 8px;
+}
+
+.btn-warning, .btn-danger {
+    border-radius: 8px;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+    }
+}

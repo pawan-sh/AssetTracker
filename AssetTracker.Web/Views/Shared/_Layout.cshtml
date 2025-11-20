@@ -1,5 +1,4 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using System.Security.Claims
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
@@ -13,143 +12,162 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* Glass Navigation Bar */
-        .glass-nav {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 15px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fb;
+            display: flex;
+            flex-direction: column;
         }
 
-            .glass-nav .nav-link,
-            .glass-nav .navbar-brand {
-                font-size: 20px;
-                font-weight: 600;
-                color: #0a1a3d !important;
+        /* NAVBAR */
+        .navbar-custom {
+            background: #0a1a3d;
+            padding: 14px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+            .navbar-custom .navbar-brand {
+                color: #fff !important;
+                font-size: 22px;
+                font-weight: 700;
             }
 
-        /* Page Content Wrapper */
-        .content-area {
-            padding: 40px 60px;
+            .navbar-custom .nav-link {
+                color: #d7e2ff !important;
+                font-weight: 500;
+                padding: 10px 18px;
+                border-radius: 8px;
+                transition: 0.2s ease-in-out;
+            }
+
+                .navbar-custom .nav-link:hover {
+                    background: rgba(255,255,255,0.12);
+                    color: #fff !important;
+                }
+
+        /* MAIN CONTENT AREA */
+        .main-content {
+            flex: 1;
+            padding: 40px 25px;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
         }
 
-        /* Home Page Fullscreen */
-        .no-padding {
-            padding: 0 !important;
+        .page-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 30px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+        }
+
+        /* FOOTER */
+        footer {
+            width: 100%;
+            background: #0a1a3d;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: 0;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- NAVIGATION -->
-    <header>
-        <nav class="navbar glass-nav navbar-expand-sm navbar-light">
-            <div class="container-fluid">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
 
-                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
-                    AssetTracker
-                </a>
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">AssetTracker</a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+            <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                <div class="collapse navbar-collapse" id="mainNav">
-                    <ul class="navbar-nav ms-auto">
-
-                        @if (SignInManager.IsSignedIn(User))
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        @if (User.IsInRole("Admin") || User.IsInRole("Director"))
                         {
-                            <!-- Admin + Director -->
-                            @if (User.IsInRole("Admin") || User.IsInRole("Director"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Assets" asp-action="Index">Assets</a>
-                                </li>
-                            }
-
-                            <!-- Admin + HR -->
-                            @if (User.IsInRole("Admin") || User.IsInRole("HR"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Employees" asp-action="Index">Employees</a>
-                                </li>
-                            }
-
-                            <!-- Admin Only -->
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="AssetAssignments" asp-action="Index">Assignments</a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Issue" asp-action="List">Issues</a>
-                                </li>
-                            }
-
-                            @if (User.IsInRole("Employee") || User.IsInRole("HR"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Issue" asp-action="Create">Report Issue</a>
-                                </li>
-                            }
-
-                            @if (!User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Issue" asp-action="MyIssues">My Issues</a>
-                                </li>
-                            }
-                            
-
-
-
-                            <!-- Profile Dropdown -->
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle fw-bold" data-bs-toggle="dropdown">
-                                    @UserManager.GetUserName(User)
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">Profile</a></li>
-                                    <li><hr class="dropdown-divider" /></li>
-                                    <li>
-                                        <form asp-controller="Account" asp-action="Logout" method="post">
-                                            <button class="dropdown-item text-danger">Logout</button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </li>
-                        }
-                        else
-                        {
-                            <!-- Not logged in -->
-                            <li class="nav-item">
-                                <a class="btn btn-primary px-3" asp-controller="Account" asp-action="Login">Login</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Assets" asp-action="Index">Assets</a></li>
                         }
 
-                    </ul>
+                        @if (User.IsInRole("Admin") || User.IsInRole("HR"))
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Employees" asp-action="Index">Employees</a></li>
+                        }
 
-                </div>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="AssetAssignments" asp-action="Index">Assignments</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Issue" asp-action="List">Issues</a></li>
+                        }
 
+                        @if (User.IsInRole("Employee") || User.IsInRole("HR"))
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Issue" asp-action="Create">Report Issue</a></li>
+                        }
+
+                        @if (!User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Issue" asp-action="MyIssues">My Issues</a></li>
+                        }
+
+                        <!-- PROFILE DROPDOWN -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light fw-bold" data-bs-toggle="dropdown">
+                                @UserManager.GetUserName(User)
+                            </a>
+
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">Profile</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post">
+                                        <button class="dropdown-item text-danger">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item"><a class="btn btn-primary px-3" asp-controller="Account" asp-action="Login">Login</a></li>
+                    }
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
-    <!-- PAGE CONTENT -->
-    <div class="content-area @(ViewData["NoPadding"])">
+    <!-- MAIN CONTENT AREA with FullWidth condition -->
+    @if (ViewData["FullWidth"] as bool? == true)
+    {
         @RenderBody()
-    </div>
+    }
+    else
+    {
+        <div class="main-content">
+            <div class="page-card">
+                @RenderBody()
+            </div>
+        </div>
+    }
+
+    <!-- FOOTER -->
+    <footer>
+        © @DateTime.Now.Year AssetTracker — Powered by EnkayTech
+    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     @RenderSection("Scripts", required: false)
-
 </body>
 </html>
