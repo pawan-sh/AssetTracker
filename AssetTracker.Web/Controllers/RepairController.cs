@@ -54,7 +54,7 @@ public class RepairController : Controller
             TechnicianName = repair.TechnicianName,
             TechnicianPhone = repair.TechnicianPhone,
             Cost = repair.RepairCost,
-            StartedOn = DateTime.UtcNow
+            StartedOn = DateTime.Now.ToString("dd-MMM-yyyy hh:mm tt")
         });
 
         return RedirectToAction("List", "Issue");

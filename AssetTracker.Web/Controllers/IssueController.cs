@@ -71,7 +71,7 @@ public class IssueController : Controller
             AssetName = issue.AssetName,
             EmployeeEmail = issue.ReportedBy,   // you might map email differently
             Message = message,
-            CompletedOn = DateTime.UtcNow
+            CompletedOn = DateTime.Now.ToString("dd-MMM-yyyy hh:mm tt")
         });
 
         return RedirectToAction("List");
