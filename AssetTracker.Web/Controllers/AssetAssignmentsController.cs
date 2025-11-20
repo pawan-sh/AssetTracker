@@ -54,9 +54,16 @@ namespace AssetTracker.Web.Controllers
             ViewData["EmployeeId"] =
                 new SelectList(_context.Employees, "EmployeeId", "Name");
 
-            ViewData["AssetId"] =
-                new SelectList(_context.Assets.Where(a => a.Status == "Available"),
-                    "AssetId", "SerialNumber");
+            var availableAssets = _context.Assets
+                .Where(a => a.Status == "Available")
+                .Select(a => new
+                {
+                    a.AssetId,
+                    DisplayText = $"{a.AssetType} - {a.Brand} {a.Model} (SN: {a.SerialNumber})"
+                })
+                .ToList();
+
+            ViewData["AssetId"] = new SelectList(availableAssets, "AssetId", "DisplayText");
 
             return View();
         }
@@ -66,6 +73,10 @@ namespace AssetTracker.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AssetAssignment assetAssignment)
         {
+            // Remove navigation properties from validation
+            ModelState.Remove("Asset");
+            ModelState.Remove("Employee");
+
             if (ModelState.IsValid)
             {
                 assetAssignment.AssignedDate = DateTime.Now;
@@ -84,9 +95,16 @@ namespace AssetTracker.Web.Controllers
             ViewData["EmployeeId"] =
                 new SelectList(_context.Employees, "EmployeeId", "Name", assetAssignment.EmployeeId);
 
-            ViewData["AssetId"] =
-                new SelectList(_context.Assets.Where(a => a.Status == "Available"),
-                    "AssetId", "SerialNumber", assetAssignment.AssetId);
+            var availableAssets = _context.Assets
+                .Where(a => a.Status == "Available" || a.AssetId == assetAssignment.AssetId) // Include currently selected even if assigned (in case of error)
+                .Select(a => new
+                {
+                    a.AssetId,
+                    DisplayText = $"{a.AssetType} - {a.Brand} {a.Model} (SN: {a.SerialNumber})"
+                })
+                .ToList();
+
+            ViewData["AssetId"] = new SelectList(availableAssets, "AssetId", "DisplayText", assetAssignment.AssetId);
 
             return View(assetAssignment);
         }

@@ -10,18 +10,33 @@ using AssetTracker.Web.Services;
 public class IssueController : Controller
 {
     private readonly AssetTrackerDbContext _ctx;
-    private readonly EventGridService _eventGrid;   // <-- new
+    private readonly EventGridService _eventGrid;
+    private readonly IWebHostEnvironment _webHostEnvironment; // <-- new
 
-    public IssueController(AssetTrackerDbContext ctx, EventGridService eventGrid)
+    public IssueController(AssetTrackerDbContext ctx, EventGridService eventGrid, IWebHostEnvironment webHostEnvironment)
     {
         _ctx = ctx;
-        _eventGrid = eventGrid;                    // <-- new
+        _eventGrid = eventGrid;
+        _webHostEnvironment = webHostEnvironment; // <-- new
     }
 
     // Report Issue (Employee)
     [HttpGet]
-    public IActionResult Create()
+    public IActionResult Create(int? assetId)
     {
+        if (assetId.HasValue)
+        {
+            var asset = _ctx.Assets.Find(assetId.Value);
+            if (asset != null)
+            {
+                var model = new Issue
+                {
+                    AssetId = asset.AssetId,
+                    AssetName = $"{asset.AssetType} - {asset.Brand} {asset.Model} ({asset.SerialNumber})"
+                };
+                return View(model);
+            }
+        }
         return View();
     }
 
@@ -38,6 +53,20 @@ public class IssueController : Controller
         return RedirectToAction("MyIssues");
     }
 
+    // Employee: My Assets
+    public IActionResult MyAssets()
+    {
+        var userEmail = User.Identity?.Name ?? "";
+
+        var assignments = _ctx.AssetAssignments
+            .Include(a => a.Asset)
+            .Include(a => a.Employee)
+            .Where(a => a.Employee != null && a.Employee.Email == userEmail && a.ReturnedDate == null)
+            .ToList();
+
+        return View(assignments);
+    }
+
     // View Repair Details
     public IActionResult RepairDetails(int id)
     {
@@ -50,17 +79,59 @@ public class IssueController : Controller
 
         return View(issue);
     }
-    //Mark Issue as Completed
+    // Admin: Start Internal Repair
     [HttpPost]
-    public async Task<IActionResult> MarkCompleted(int id, string message)
+    [Authorize(Roles = "Admin")]
+    public IActionResult StartInternalRepair(int id)
     {
-        var issue = _ctx.Issues.FirstOrDefault(i => i.IssueId == id);
+        var issue = _ctx.Issues.Find(id);
+        if (issue == null) return NotFound();
 
-        if (issue == null)
-            return NotFound();
+        issue.Status = "In Progress";
+        _ctx.SaveChanges();
+        return RedirectToAction("List");
+    }
+
+    // Admin: Close Issue (GET)
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    public IActionResult Close(int id)
+    {
+        var issue = _ctx.Issues.Find(id);
+        if (issue == null) return NotFound();
+        return View(issue);
+    }
+
+    // Admin: Close Issue (POST)
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Close(int id, string resolution, decimal? cost, string invoiceReference, string message, IFormFile? invoiceFile)
+    {
+        var issue = _ctx.Issues.Find(id);
+        if (issue == null) return NotFound();
 
         issue.Status = "Completed";
+        issue.Resolution = resolution;
+        issue.Cost = cost;
+        issue.InvoiceReference = invoiceReference;
         issue.CompletionMessage = message;
+
+        // Handle File Upload
+        if (invoiceFile != null && invoiceFile.Length > 0)
+        {
+            string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "invoices");
+            Directory.CreateDirectory(uploadsFolder); // Ensure directory exists
+
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + invoiceFile.FileName;
+            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await invoiceFile.CopyToAsync(fileStream);
+            }
+
+            issue.InvoicePath = "/uploads/invoices/" + uniqueFileName;
+        }
 
         _ctx.SaveChanges();
 
@@ -69,12 +140,21 @@ public class IssueController : Controller
         {
             IssueId = issue.IssueId,
             AssetName = issue.AssetName,
-            EmployeeEmail = issue.ReportedBy,   // you might map email differently
+            EmployeeEmail = issue.ReportedBy,
             Message = message,
+            Resolution = resolution,
+            Cost = cost,
             CompletedOn = DateTime.Now.ToString("dd-MMM-yyyy hh:mm tt")
         });
 
         return RedirectToAction("List");
+    }
+
+    //Mark Issue as Completed (Legacy - Redirect to Close)
+    [HttpPost]
+    public IActionResult MarkCompleted(int id)
+    {
+        return RedirectToAction("Close", new { id });
     }
 
 

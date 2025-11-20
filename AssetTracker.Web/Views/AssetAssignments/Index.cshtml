@@ -1,40 +1,53 @@
 ﻿@model IEnumerable<AssetTracker.Core.Models.AssetAssignment>
 
-<h2>Asset Assignments</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-dark">Asset Assignments</h2>
+    <a class="btn btn-primary" asp-action="Create">+ Assign New Asset</a>
+</div>
 
-<p>
-    <a class="btn btn-primary" asp-action="Create">Assign New Asset</a>
-</p>
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Asset</th>
-            <th>Employee</th>
-            <th>Assigned Date</th>
-            <th>Returned Date</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div class="table-responsive">
+    <table class="table table-custom">
+        <thead>
             <tr>
-                <td>@($"{item.Asset?.AssetType} - {item.Asset?.Brand} {item.Asset?.Model} (SN: {item.Asset?.SerialNumber})")</td>
-
-                <td>@item.Employee?.Name</td>
-                <td>@item.AssignedDate.ToShortDateString()</td>
-                <td>@(item.ReturnedDate?.ToShortDateString() ?? "Not Returned")</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.AssetAssignmentId" class="btn btn-info btn-sm">Details</a>
-
-                    @if (item.ReturnedDate == null)
-                    {
-                        <a asp-action="Return" asp-route-id="@item.AssetAssignmentId" class="btn btn-warning btn-sm">Return</a>
-                    }
-                </td>
+                <th>Asset Details</th>
+                <th>Employee</th>
+                <th>Assigned Date</th>
+                <th>Returned Date</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="fw-bold">@item.Asset?.AssetType - @item.Asset?.Brand @item.Asset?.Model</div>
+                        <small class="text-muted">SN: @item.Asset?.SerialNumber</small>
+                    </td>
+
+                    <td>@item.Employee?.Name</td>
+                    <td>@item.AssignedDate.ToShortDateString()</td>
+                    <td>
+                        @if (item.ReturnedDate != null)
+                        {
+                            <span class="text-success">@item.ReturnedDate?.ToShortDateString()</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Active</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.AssetAssignmentId" class="btn btn-outline-info btn-sm">Details</a>
+
+                        @if (item.ReturnedDate == null)
+                        {
+                            <a asp-action="Return" asp-route-id="@item.AssetAssignmentId" class="btn btn-outline-warning btn-sm">Return</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 

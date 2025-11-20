@@ -27,6 +27,7 @@ namespace AssetTracker.Web
             {
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false; // Allow passwords without digits
                 options.Password.RequiredLength = 6;
             })
             .AddEntityFrameworkStores<AssetTrackerDbContext>()

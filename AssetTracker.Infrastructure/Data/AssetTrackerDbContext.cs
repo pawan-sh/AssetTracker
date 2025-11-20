@@ -29,6 +29,11 @@ namespace AssetTracker.Infrastructure.Data
             modelBuilder.Entity<Repair>()
                 .Property(r => r.RepairCost)
                 .HasPrecision(18, 2);
+
+            // Configure decimal precision for Issue.Cost
+            modelBuilder.Entity<Issue>()
+                .Property(i => i.Cost)
+                .HasPrecision(18, 2);
         }
     }
 }
