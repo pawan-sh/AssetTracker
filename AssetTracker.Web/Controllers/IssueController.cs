@@ -95,10 +95,11 @@ public class IssueController : Controller
     // Admin: Close Issue (GET)
     [HttpGet]
     [Authorize(Roles = "Admin")]
-    public IActionResult Close(int id)
+    public IActionResult Close(int id, bool isExternal = false)
     {
         var issue = _ctx.Issues.Find(id);
         if (issue == null) return NotFound();
+        ViewBag.IsExternal = isExternal;
         return View(issue);
     }
 

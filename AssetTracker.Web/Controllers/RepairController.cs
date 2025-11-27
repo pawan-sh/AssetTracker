@@ -29,6 +29,7 @@ public class RepairController : Controller
     public async Task<IActionResult> Create(Repair repair)
     {
         repair.RepairDate = DateTime.Now;
+        repair.RepairNotes = repair.RepairNotes ?? "";
 
         _ctx.Repairs.Add(repair);
 

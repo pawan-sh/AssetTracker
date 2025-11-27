@@ -65,6 +65,15 @@
                             </div>
                         </div>
 
+                        <div class="mb-3">
+                            <label asp-for="Origin" class="form-label fw-bold">Origin</label>
+                            <select asp-for="Origin" class="form-select" required>
+                                <option value="India" selected>India</option>
+                                <option value="US">US</option>
+                            </select>
+                            <span asp-validation-for="Origin" class="text-danger"></span>
+                        </div>
+
                         <div class="d-grid gap-2 mt-4">
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i class="bi bi-plus-circle"></i> Add Asset
