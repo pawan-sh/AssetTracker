@@ -28,9 +28,9 @@
 
         /* NAVBAR */
         .navbar-custom {
-            background: #1e293b;
-            padding: 14px 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            padding: 16px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -38,55 +38,110 @@
 
         .navbar-custom .navbar-brand {
             color: #fff !important;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
-            letter-spacing: -0.3px;
+            letter-spacing: -0.5px;
+            padding: 8px 16px;
+            border-left: 4px solid #3b82f6;
         }
 
         .navbar-custom .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            font-weight: 600;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 10px 18px;
+            margin: 0 4px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .navbar-custom .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(59, 130, 246, 0.2);
             color: #fff !important;
+            transform: translateY(-2px);
+        }
+
+        .navbar-custom .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: #3b82f6;
+            transition: width 0.3s ease;
+        }
+
+        .navbar-custom .nav-link:hover::after {
+            width: 60%;
         }
 
         .navbar-custom .btn-primary {
-            background: #2563eb;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             border: none;
-            padding: 8px 20px;
-            border-radius: 6px;
+            padding: 10px 24px;
+            border-radius: 8px;
             font-weight: 600;
-            transition: all 0.2s ease;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
         }
 
         .navbar-custom .btn-primary:hover {
-            background: #1e40af;
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
 
         .navbar-custom .dropdown-menu {
-            border-radius: 8px;
+            border-radius: 12px;
             border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 6px;
-            margin-top: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            padding: 8px;
+            margin-top: 12px;
+            min-width: 200px;
+        }
+
+        .navbar-custom .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar-custom .dropdown-toggle::after {
+            margin-left: 4px;
         }
 
         .navbar-custom .dropdown-item {
-            border-radius: 6px;
-            padding: 8px 14px;
-            font-weight: 600;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-weight: 500;
+            font-size: 14px;
             transition: all 0.2s ease;
         }
 
         .navbar-custom .dropdown-item:hover {
-            background: #f1f5f9;
-            color: #1e293b;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            transform: translateX(4px);
+        }
+
+        .navbar-custom .navbar-nav {
+            align-items: center;
+            gap: 8px;
+        }
+
+        @@media (max-width: 991px) {
+            .navbar-custom .navbar-nav {
+                margin-top: 16px;
+                gap: 4px;
+            }
+            
+            .navbar-custom .nav-link {
+                margin: 4px 0;
+            }
         }
 
         /* MAIN CONTENT AREA */
@@ -168,6 +223,7 @@
                         {
                             <li class="nav-item"><a class="nav-link" asp-controller="AssetAssignments" asp-action="Index">Assignments</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="Issue" asp-action="List">Issues</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="AssetRequest" asp-action="List">Asset Requests</a></li>
                         }
 
                         @if (User.IsInRole("Employee") || User.IsInRole("HR"))
@@ -175,6 +231,7 @@
                             <li class="nav-item"><a class="nav-link" asp-controller="Issue" asp-action="MyAssets">My Assets</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="Issue" asp-action="Create">Report Issue</a></li>
                             <li class="nav-item"><a class="nav-link" asp-controller="Issue" asp-action="MyIssues">My Issues</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="AssetRequest" asp-action="Create">Request Asset</a></li>
                         }
 
                         <!-- PROFILE DROPDOWN -->

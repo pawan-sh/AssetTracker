@@ -21,7 +21,13 @@ namespace AssetTracker.Web.Controllers
         {
             if (User.Identity != null && User.Identity.IsAuthenticated)
             {
-                // Dashboard Logic
+                // Redirect employees to My Assets page
+                if (User.IsInRole("Employee") || (User.IsInRole("HR") && !User.IsInRole("Admin")))
+                {
+                    return RedirectToAction("MyAssets", "Issue");
+                }
+
+                // Dashboard Logic - Only for Admin/Director
                 var model = new DashboardViewModel
                 {
                     TotalAssets = _context.Assets.Count(),
