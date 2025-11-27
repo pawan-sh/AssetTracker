@@ -1,0 +1,71 @@
+@model IEnumerable<AssetTracker.Core.Models.AssetRequest>
+
+@{
+    ViewData["Title"] = "My Asset Requests";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-dark">My Asset Requests</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> New Request
+    </a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> You haven't submitted any asset requests yet.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-custom">
+            <thead>
+                <tr>
+                    <th>Asset Name</th>
+                    <th>Type</th>
+                    <th>Purpose</th>
+                    <th>Requested Date</th>
+                    <th>Status</th>
+                    <th>Admin Comments</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var request in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">@request.AssetName</td>
+                        <td>@request.AssetType</td>
+                        <td>@request.Purpose</td>
+                        <td>@request.RequestedDate.ToString("dd-MMM-yyyy")</td>
+                        <td>
+                            @if (request.Status == "Pending")
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                            else if (request.Status == "Approved")
+                            {
+                                <span class="badge bg-success">Approved</span>
+                            }
+                            else if (request.Status == "Rejected")
+                            {
+                                <span class="badge bg-danger">Rejected</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(request.AdminComments))
+                            {
+                                <span class="text-muted">@request.AdminComments</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">—</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

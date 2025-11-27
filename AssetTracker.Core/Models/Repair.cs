@@ -12,5 +12,5 @@
 
     public DateTime RepairDate { get; set; }
 
-    public string RepairNotes { get; set; } = "";
+    public string? RepairNotes { get; set; }
 }

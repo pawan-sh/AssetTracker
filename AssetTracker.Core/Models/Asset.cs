@@ -9,5 +9,6 @@
         public string? SerialNumber { get; set; }
         public DateTime? PurchaseDate { get; set; }
         public string Status { get; set; } = "Available";
+        public string Origin { get; set; } = "India";
     }
 }

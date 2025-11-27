@@ -93,7 +93,8 @@
                                 <a class="btn btn-success btn-sm"
                                    asp-controller="Issue"
                                    asp-action="Close"
-                                   asp-route-id="@item.IssueId">
+                                   asp-route-id="@item.IssueId"
+                                   asp-route-isExternal="@(item.Status == "InRepair")">
                                     <i class="bi bi-check-lg"></i> Close Issue
                                 </a>
                             </div>

@@ -40,25 +40,28 @@
                             <textarea name="resolution" class="form-control" rows="3" required placeholder="What was done to fix the issue?"></textarea>
                         </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="cost" class="form-label fw-bold">Repair Cost</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    <input type="number" name="cost" class="form-control" step="0.01" placeholder="0.00" />
+                        @if (ViewBag.IsExternal == true)
+                        {
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="cost" class="form-label fw-bold">Repair Cost</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" name="cost" class="form-control" step="0.01" placeholder="0.00" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="invoiceReference" class="form-label fw-bold">Invoice Reference / Number</label>
+                                    <input type="text" name="invoiceReference" class="form-control" placeholder="e.g. INV-2025-001" />
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <label for="invoiceReference" class="form-label fw-bold">Invoice Reference / Number</label>
-                                <input type="text" name="invoiceReference" class="form-control" placeholder="e.g. INV-2025-001" />
-                            </div>
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="invoiceFile" class="form-label fw-bold">Attach Invoice <span class="text-muted">(Optional)</span></label>
-                            <input type="file" name="invoiceFile" class="form-control" accept=".pdf,.jpg,.jpeg,.png" />
-                            <small class="text-muted">Supported formats: PDF, JPG, PNG</small>
-                        </div>
+                            <div class="mb-3">
+                                <label for="invoiceFile" class="form-label fw-bold">Attach Invoice <span class="text-muted">(Optional)</span></label>
+                                <input type="file" name="invoiceFile" class="form-control" accept=".pdf,.jpg,.jpeg,.png" />
+                                <small class="text-muted">Supported formats: PDF, JPG, PNG</small>
+                            </div>
+                        }
 
                         <div class="mb-3">
                             <label for="message" class="form-label fw-bold">Message to Employee</label>
